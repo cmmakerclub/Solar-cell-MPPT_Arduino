@@ -11,7 +11,7 @@ float valueAmp = 0;        // value read from the pot
 float valueVolt = 0;        // value read from the pot
 float watt = 0; //Power = V*A
 
-byte outputValue = 0;        // value output to the PWM (analog out)
+byte outputValue = 1;        // value output to the PWM (analog out)
 
 float deltaVolt = 0;
 float deltaAmp = 0;
@@ -31,41 +31,41 @@ void setup() {
 
 void loop() {
   timeMer = millis();
-  //เช็คเดลต้าV Amp 
+  //check V Amp 
   deltaVolt = getVolt();
   deltaAmp = getAmp();
-  //เริ่ม MPPT
+  //start MPPT
   if(deltaVolt > 0){
      deltaWatt = getWatt();
-     //เก็บค่าwatt 
+     //get preious watt 
      
         
      
-         preWatt = deltaWatt;//ก่อนหน้า
-         //delay(1);
+         preWatt = deltaWatt;//
+         delayMicroseconds(100);
+         //get now watt
          deltaWatt = getWatt();
-          nowWatt = deltaWatt;//ตอนน
+          nowWatt = deltaWatt;//
      
-     //ถ้าwattตอนนี้มากกว่าให้เพิ่ม%PWM
-     if(nowWatt > preWatt && outputValue < 255){
+     //Pk > Pk-1
+     if(nowWatt > preWatt && outputValue < 256){
          outputValue++;
-     }else{//ถ้าwattก่อนหน้ามากกว่าให้ลด%PWM
-       if(outputValue > 1){
-         //
+     }else if(preWatt > nowWatt && outputValue > 10 ){//Pk-1 >Pk
          
          //
-         outputValue--;//((preWatt/100)*nowWatt)*2.55;
-       }
+           outputValue--;//
+         
      }
-  }else{//ถ้าแรงดันเป็น0แต่มีกระแสใหลแสดงว่ามีการซ๊อตต้องลด%pwm
+  }else{//Short
       if(deltaAmp >0){
         outputValue--;
       }
   }
-  //สั่งPWMทำงาน
+  //run PWM
   //outputValue = 0;
   analogWrite(analogOutPin,outputValue);
   //debug
+  /*
   valuePwm = map(outputValue, 0, 255, 0,100);
   // print the results to the serial monitor:
   if(timeMer%1 == 0){
@@ -79,14 +79,14 @@ Serial.print("mA\t Watt = ");
   Serial.print(valuePwm);
  Serial.println("%");  
   }
+  */
 }
 
  float getWatt(){
   // read the analog in value:
   valueAmp = analogRead(senAmpInPin);
   valueVolt = analogRead(senVoltInPin); 
- // แปลงเป็น V และ Amp
- //เช็นเชอร์อ่านกระแสได้สูงสุด 5A และ 1A จะอ่านเป็นดิจิตอลได้ 204.6
+ //Current 2A = 1023byte
  valueAmp = (valueAmp / 204.6)/2;
   //เช็นเชอร์จะอ่านค่าVได้21V ดังนั้นค่าดิจิตอล 1V = 1023/21 = 48.71
   valueVolt = valueVolt / 48.5;
