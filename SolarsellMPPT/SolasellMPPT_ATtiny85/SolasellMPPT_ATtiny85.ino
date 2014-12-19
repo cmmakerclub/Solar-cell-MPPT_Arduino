@@ -3,9 +3,9 @@
 *
 */
 
-const int senAmpInPin = A0;  // Analog input pin that the potentiometer is attached to
-const int senVoltInPin = A1;  // Analog input pin
-const int analogOutPin = 11; // Analog output pin control mosfet
+const int senAmpInPin = A2;  // Analog input pin that the potentiometer is attached to
+const int senVoltInPin = A3;  // Analog input pin
+const int analogOutPin = 0; // Analog output pin control mosfet
 
 float valueAmp = 0;        // value read from the pot
 float valueVolt = 0;        // value read from the pot
@@ -17,7 +17,7 @@ float deltaVolt = 0;
 float deltaAmp = 0;
 float deltaWatt = 0;
 
-unsigned long timeMer = 0;//millis();
+//unsigned long timeMer = 0;//millis();
 
 float preWatt = 0;
 float nowWatt = 1;
@@ -26,11 +26,11 @@ int valuePwm = 0;
 
 void setup() {
   // initialize serial communications at 9600 bps:
-  Serial.begin(9600); 
+  //Serial.begin(9600); 
 }
 
 void loop() {
-  timeMer = millis();
+ // timeMer = millis();
   //check V Amp 
   deltaVolt = getVolt();
   deltaAmp = getAmp();
@@ -42,13 +42,14 @@ void loop() {
         
      
          preWatt = deltaWatt;//
-         delayMicroseconds(100);
+         //delay(1);
+         delayMicroseconds(50);
          //get now watt
          deltaWatt = getWatt();
           nowWatt = deltaWatt;//
      
      //Pk > Pk-1
-     if(nowWatt > preWatt && outputValue < 256){
+     if(nowWatt > preWatt && outputValue < 255){
          outputValue++;
      }else if(preWatt > nowWatt && outputValue > 10 ){//Pk-1 >Pk
          
