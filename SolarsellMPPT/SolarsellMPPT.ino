@@ -5,7 +5,7 @@
 
 const int senAmpInPin = A0;  // Analog input pin that the potentiometer is attached to
 const int senVoltInPin = A1;  // Analog input pin
-const int analogOutPin = 11; // Analog output pin control mosfet
+const int analogOutPin = 9; // Analog output pin control mosfet
 
 float valueAmp = 0;        // value read from the pot
 float valueVolt = 0;        // value read from the pot
@@ -24,9 +24,19 @@ float nowWatt = 1;
 
 int valuePwm = 0;
 
+int gianP = 0;
+int gianM = 0;
 void setup() {
   // initialize serial communications at 9600 bps:
   Serial.begin(9600); 
+  //
+  //---------------------------------------------- Set PWM frequency for D9 & D10 ------------------------------
+ 
+TCCR1B = TCCR1B & B11111000 | B00000001;    // set timer 1 divisor to     1 for PWM frequency of 31372.55 Hz
+//TCCR1B = TCCR1B & B11111000 | B00000010;    // set timer 1 divisor to     8 for PWM frequency of  3921.16 Hz
+//  TCCR1B = TCCR1B & B11111000 | B00000011;    // set timer 1 divisor to    64 for PWM frequency of   490.20 Hz (The DEFAULT)
+//TCCR1B = TCCR1B & B11111000 | B00000100;    // set timer 1 divisor to   256 for PWM frequency of   122.55 Hz
+//TCCR1B = TCCR1B & B11111000 | B00000101;    // set timer 1 divisor to  1024 for PWM frequency of    30.64 Hz
 }
 
 void loop() {
@@ -35,64 +45,81 @@ void loop() {
   deltaVolt = getVolt();
   deltaAmp = getAmp();
   //start MPPT
-  if(deltaVolt > 0){
+  if(deltaVolt > 4){
      deltaWatt = getWatt();
      //get preious watt 
      
         
      
          preWatt = deltaWatt;//
-         delayMicroseconds(100);
+         delayMicroseconds(1);
          //get now watt
          deltaWatt = getWatt();
           nowWatt = deltaWatt;//
-     
+     //decalr gian
+    /* if(deltaVolt > 17*0.8){
+         gianP = 2;
+         gianM = 1;
+     }else{
+         gianP = 2;
+         gianM = 1;
+     }*/
      //Pk > Pk-1
-     if(nowWatt > preWatt && outputValue < 256){
-         outputValue++;
-     }else if(preWatt > nowWatt && outputValue > 10 ){//Pk-1 >Pk
-         
+     if(nowWatt > preWatt ){
+       gianP = 1.1;
+         gianM = 1;
+       
+         outputValue+=gianP;
+         if(outputValue >=255){
+            outputValue = 255;  
+         }
+     }else if(preWatt > nowWatt ){//Pk-1 >Pk
+         gianP =1;
+         gianM = 1.1;
          //
-           outputValue--;//
+           outputValue-=gianM;//
+           if(outputValue < 1){
+            outputValue = 1;  
+         }
          
      }
   }else{//Short
       if(deltaAmp >0){
-        outputValue--;
+        outputValue = 1;
       }
   }
   //run PWM
   //outputValue = 0;
   analogWrite(analogOutPin,outputValue);
   //debug
-  /*
+  
   valuePwm = map(outputValue, 0, 255, 0,100);
   // print the results to the serial monitor:
-  if(timeMer%1 == 0){
+  if(timeMer%2 == 0){
   Serial.print("Volt = " );                       
   Serial.print(deltaVolt);      
   Serial.print("V\t Amp = ");      
   Serial.print(deltaAmp); 
 Serial.print("mA\t Watt = ");      
   Serial.print(deltaWatt);  
-  Serial.print("mW\t PWM = ");      
+  Serial.print("W\t PWM = ");      
   Serial.print(valuePwm);
  Serial.println("%");  
   }
-  */
+ 
 }
 
  float getWatt(){
   // read the analog in value:
   valueAmp = analogRead(senAmpInPin);
   valueVolt = analogRead(senVoltInPin); 
- //Current 280mA = 0.1v  0.1V = 20.46byte 1mA = 13.7byte
- valueAmp = (valueAmp * 13.7);
+ //Current
+ valueAmp = (valueAmp/204.6);
   //เช็นเชอร์จะอ่านค่าVได้21V ดังนั้นค่าดิจิตอล 1V = 1023/21 = 48.71
-  valueVolt = valueVolt / 48.5;
+  valueVolt = (valueVolt / 48.5);
   //หาค่าWจากสูตร W=VxI
   watt = valueAmp*valueVolt;
-  return watt*1000;
+  return watt;
 }
 
  float getVolt(){
@@ -100,7 +127,7 @@ Serial.print("mA\t Watt = ");
   //valueAmp = analogRead(senAmpInPin);
   valueVolt = analogRead(senVoltInPin); 
   //เช็นเชอร์จะอ่านค่าVได้21V ดังนั้นค่าดิจิตอล 1V = 1023/21 = 48.71
-  valueVolt = valueVolt / 48.5;
+  valueVolt = (valueVolt / 48.5);
   
   return valueVolt;
   
@@ -111,7 +138,7 @@ Serial.print("mA\t Watt = ");
   valueAmp = analogRead(senAmpInPin);
   //valueVolt = analogRead(senVoltInPin); 
   //เช็นเชอร์อ่านกระแสได้สูงสุด 5A และ 1A จะอ่านเป็นดิจิตอลได้ 204.6
- valueAmp = (valueAmp / 204.6)/2;
+ valueAmp = (valueAmp/204.6);
  
  return valueAmp*1000;
 }
