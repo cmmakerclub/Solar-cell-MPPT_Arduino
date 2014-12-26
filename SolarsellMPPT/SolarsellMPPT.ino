@@ -11,7 +11,7 @@ float valueAmp = 0;        // value read from the pot
 float valueVolt = 0;        // value read from the pot
 float watt = 0; //Power = V*A
 
-byte outputValue = 1;        // value output to the PWM (analog out)
+byte outputValue = 5;        // value output to the PWM (analog out)
 
 float deltaVolt = 0;
 float deltaAmp = 0;
@@ -24,8 +24,9 @@ float nowWatt = 1;
 
 int valuePwm = 0;
 
-int gianP = 0;
-int gianM = 0;
+float gianP = 0;
+float gianM = 0;
+float solarVolt = 17.5;
 void setup() {
   // initialize serial communications at 9600 bps:
   Serial.begin(9600); 
@@ -45,7 +46,7 @@ void loop() {
   deltaVolt = getVolt();
   deltaAmp = getAmp();
   //start MPPT
-  if(deltaVolt > 4){
+  if(deltaVolt > 6){
      deltaWatt = getWatt();
      //get preious watt 
      
@@ -57,40 +58,42 @@ void loop() {
          deltaWatt = getWatt();
           nowWatt = deltaWatt;//
      //decalr gian
-    /* if(deltaVolt > 17*0.8){
-         gianP = 2;
+     if(deltaVolt > solarVolt*0.825){
+         gianP = 1.08;
          gianM = 1;
      }else{
-         gianP = 2;
+         gianP = 1;
          gianM = 1;
-     }*/
+     }
      //Pk > Pk-1
-     if(nowWatt > preWatt ){
-       gianP = 1.1;
-         gianM = 1;
+     if(nowWatt >= preWatt ){
+       //gianP = 1.1;
+         //gianM = 1;
        
          outputValue+=gianP;
-         if(outputValue >=255){
-            outputValue = 255;  
+         if(outputValue >=254){
+            outputValue = 254;  
          }
      }else if(preWatt > nowWatt ){//Pk-1 >Pk
-         gianP =1;
-         gianM = 1.1;
+         //gianP =1;
+         //gianM = 1.1;
          //
            outputValue-=gianM;//
-           if(outputValue < 1){
+           if(outputValue <= 1){
             outputValue = 1;  
          }
          
      }
   }else{//Short
       if(deltaAmp >0){
-        outputValue = 1;
+        outputValue = outputValue*0.9;
+        Serial.println("666666666666666666666666666666666666666666666666666666666");
       }
   }
   //run PWM
   //outputValue = 0;
   analogWrite(analogOutPin,outputValue);
+ // analogWrite(analogOutPin,10);
   //debug
   
   valuePwm = map(outputValue, 0, 255, 0,100);
@@ -116,7 +119,7 @@ Serial.print("mA\t Watt = ");
  //Current
  valueAmp = (valueAmp/204.6);
   //เช็นเชอร์จะอ่านค่าVได้21V ดังนั้นค่าดิจิตอล 1V = 1023/21 = 48.71
-  valueVolt = (valueVolt / 48.5);
+  valueVolt = (valueVolt /204.6)*5.5;
   //หาค่าWจากสูตร W=VxI
   watt = valueAmp*valueVolt;
   return watt;
@@ -127,7 +130,7 @@ Serial.print("mA\t Watt = ");
   //valueAmp = analogRead(senAmpInPin);
   valueVolt = analogRead(senVoltInPin); 
   //เช็นเชอร์จะอ่านค่าVได้21V ดังนั้นค่าดิจิตอล 1V = 1023/21 = 48.71
-  valueVolt = (valueVolt / 48.5);
+  valueVolt = (valueVolt /204.6)*5.5;
   
   return valueVolt;
   
