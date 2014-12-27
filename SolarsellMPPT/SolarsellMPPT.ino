@@ -46,7 +46,7 @@ void loop() {
   deltaVolt = getVolt();
   deltaAmp = getAmp();
   //start MPPT
-  if(deltaVolt > 6){
+  if(deltaVolt > 5.9){
      deltaWatt = getWatt();
      //get preious watt 
      
@@ -59,11 +59,11 @@ void loop() {
           nowWatt = deltaWatt;//
      //decalr gian
      if(deltaVolt > solarVolt*0.825){
-         gianP = 1.08;
+         gianP = 1.2;
          gianM = 1;
      }else{
          gianP = 1;
-         gianM = 1;
+         gianM = 1.05;
      }
      //Pk > Pk-1
      if(nowWatt >= preWatt ){
@@ -118,7 +118,7 @@ Serial.print("mA\t Watt = ");
   valueVolt = analogRead(senVoltInPin); 
  //Current
  valueAmp = (valueAmp/204.6);
-  //เช็นเชอร์จะอ่านค่าVได้21V ดังนั้นค่าดิจิตอล 1V = 1023/21 = 48.71
+  //เช็นเชอร์จะอ่านค่าVมากสุดได้21V 
   valueVolt = (valueVolt /204.6)*5.5;
   //หาค่าWจากสูตร W=VxI
   watt = valueAmp*valueVolt;
@@ -129,7 +129,7 @@ Serial.print("mA\t Watt = ");
   // read the analog in value:
   //valueAmp = analogRead(senAmpInPin);
   valueVolt = analogRead(senVoltInPin); 
-  //เช็นเชอร์จะอ่านค่าVได้21V ดังนั้นค่าดิจิตอล 1V = 1023/21 = 48.71
+  //เช็นเชอร์จะอ่านค่าVมากสุดได้21V 
   valueVolt = (valueVolt /204.6)*5.5;
   
   return valueVolt;
