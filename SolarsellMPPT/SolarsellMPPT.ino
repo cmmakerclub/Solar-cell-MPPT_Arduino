@@ -11,7 +11,7 @@ float valueAmp = 0;        // value read from the pot
 float valueVolt = 0;        // value read from the pot
 float watt = 0; //Power = V*A
 
-byte outputValue = 5;        // value output to the PWM (analog out)
+byte outputValue = 254;        // value output to the PWM (analog out)
 
 float deltaVolt = 0;
 float deltaAmp = 0;
@@ -24,8 +24,8 @@ float nowWatt = 1;
 
 int valuePwm = 0;
 
-float gianP = 0;
-float gianM = 0;
+float gianP = 1;
+float gianM = 1;
 float solarVolt = 17.5;
 void setup() {
   // initialize serial communications at 9600 bps:
@@ -46,7 +46,7 @@ void loop() {
   deltaVolt = getVolt();
   deltaAmp = getAmp();
   //start MPPT
-  if(deltaVolt > 5.9){
+  if(deltaVolt > 7){
      deltaWatt = getWatt();
      //get preious watt 
      
@@ -59,36 +59,39 @@ void loop() {
           nowWatt = deltaWatt;//
      //decalr gian
      if(deltaVolt > solarVolt*0.825){
-         gianP = 1.2;
+         gianP = 1;
          gianM = 1;
      }else{
          gianP = 1;
-         gianM = 1.05;
+         gianM = 1;
      }
      //Pk > Pk-1
      if(nowWatt >= preWatt ){
        //gianP = 1.1;
          //gianM = 1;
        
-         outputValue+=gianP;
-         if(outputValue >=254){
-            outputValue = 254;  
+         outputValue-=gianP;
+         if(outputValue <= 1){
+            outputValue = 1;  
          }
      }else if(preWatt > nowWatt ){//Pk-1 >Pk
          //gianP =1;
          //gianM = 1.1;
          //
-           outputValue-=gianM;//
-           if(outputValue <= 1){
-            outputValue = 1;  
+           outputValue+=gianM;//
+           if(outputValue >= 254){
+            outputValue = 255;  
          }
          
      }
-  }else{//Short
+  }else{//Short //if over load
       if(deltaAmp >0){
-        outputValue = outputValue*0.9;
+        outputValue = outputValue*1.2;
+                   if(outputValue >= 254){
+            outputValue = 255;  
+         }
         Serial.println("666666666666666666666666666666666666666666666666666666666");
-      }
+      }  
   }
   //run PWM
   //outputValue = 0;
