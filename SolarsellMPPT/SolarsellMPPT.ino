@@ -46,7 +46,7 @@ void loop() {
   deltaVolt = getVolt();
   deltaAmp = getAmp();
   //start MPPT
-  if(deltaVolt > 7){
+  if(deltaVolt > 6){
      deltaWatt = getWatt();
      //get preious watt 
      
@@ -80,18 +80,21 @@ void loop() {
          //
            outputValue+=gianM;//
            if(outputValue >= 254){
-            outputValue = 255;  
+            outputValue = 254;  
          }
          
      }
   }else{//Short //if over load
-      if(deltaAmp >0){
+      if(deltaAmp >10){
         outputValue = outputValue*1.2;
                    if(outputValue >= 254){
-            outputValue = 255;  
+            outputValue = 254;  
          }
         Serial.println("666666666666666666666666666666666666666666666666666666666");
-      }  
+      }
+    //if(deltaAmp <10){
+      // outputValue = 250;
+    //}  
   }
   //run PWM
   //outputValue = 0;
