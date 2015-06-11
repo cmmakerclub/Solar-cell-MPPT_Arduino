@@ -6,12 +6,13 @@
 const int senAmpInPin = A0;  // Analog input pin that the potentiometer is attached to
 const int senVoltInPin = A1;  // Analog input pin
 const int analogOutPin = 9; // Analog output pin control mosfet
+const int analogOutPin2 = 10; // Analog output pin control mosfet
 
 float valueAmp = 0;        // value read from the pot
 float valueVolt = 0;        // value read from the pot
 float watt = 0; //Power = V*A
 
-byte outputValue = 254;        // value output to the PWM (analog out)
+byte outputValue = 255;        // value output to the PWM (analog out)
 
 float deltaVolt = 0;
 float deltaAmp = 0;
@@ -21,6 +22,11 @@ unsigned long timeMer = 0;//millis();
 
 float preWatt = 0;
 float nowWatt = 1;
+
+float preWatt1mS = 0;
+float nowWatt1mS = 1;
+
+long count = 0;
 
 int valuePwm = 0;
 
@@ -41,7 +47,8 @@ TCCR1B = TCCR1B & B11111000 | B00000001;    // set timer 1 divisor to     1 for 
 }
 
 void loop() {
-  timeMer = millis();
+  analogWrite(analogOutPin2,255);
+  //timeMer = millis();
   //check V Amp 
   deltaVolt = getVolt();
   deltaAmp = getAmp();
@@ -53,48 +60,65 @@ void loop() {
         
      
          preWatt = deltaWatt;//
-         delayMicroseconds(1);
+         delayMicroseconds(33);
+        //delay(1);
          //get now watt
          deltaWatt = getWatt();
           nowWatt = deltaWatt;//
-     //decalr gian
+           /*if(count == 0){
+                preWatt1mS = preWatt;
+                Serial.println(preWatt1mS);
+           }
+          count++;
+          if(timeMer%5000000 == 0){
+              Serial.println("____________________timeMer%500000 == 0______");
+             nowWatt1mS = nowWatt;
+            reset_millis();
+            if(nowWatt1mS < preWatt1mS){
+              outputValue = outputValue*0.5;
+              count = 0;
+              Serial.println("____________nowWatt1mS < preWatt1mS______________");
+            } 
+          }*/
+          
+    /* //decalr gian
      if(deltaVolt > solarVolt*0.825){
          gianP = 1;
          gianM = 1;
      }else{
          gianP = 1;
          gianM = 1;
-     }
+     }*/
      //Pk > Pk-1
-     if(nowWatt >= preWatt ){
+     if(nowWatt < preWatt ){
        //gianP = 1.1;
          //gianM = 1;
        
-         outputValue-=gianP;
-         if(outputValue <= 1){
-            outputValue = 1;  
+         outputValue+=gianP;
+         if(outputValue >=254){
+            outputValue = 255;  
          }
-     }else if(preWatt > nowWatt ){//Pk-1 >Pk
+     }else //if(nowWatt > preWatt  )
+     {//Pk-1 >Pk
          //gianP =1;
          //gianM = 1.1;
          //
-           outputValue+=gianM;//
-           if(outputValue >= 254){
-            outputValue = 254;  
+           outputValue-=gianM;//
+           if(outputValue < 1){
+            outputValue = 1;  
          }
          
      }
-  }else{//Short //if over load
-      if(deltaAmp >10){
+  }else{//Short
+      //if(deltaAmp >0){
+        if(255/1.2 <= outputValue){
+            outputValue = 255;  
+         }else{
         outputValue = outputValue*1.2;
-                   if(outputValue >= 254){
-            outputValue = 254;  
-         }
         Serial.println("666666666666666666666666666666666666666666666666666666666");
-      }
-    //if(deltaAmp <10){
-      // outputValue = 250;
-    //}  
+         }
+      //}
+      
   }
   //run PWM
   //outputValue = 0;
@@ -135,8 +159,8 @@ Serial.print("mA\t Watt = ");
   // read the analog in value:
   //valueAmp = analogRead(senAmpInPin);
   valueVolt = analogRead(senVoltInPin); 
-  //เช็นเชอร์จะอ่านค่าVมากสุดได้21V 
-  valueVolt = (valueVolt /204.6)*5.5;
+  //เช็นเชอร์จะอ่านค่าVมากสุดได้26.25V 
+  valueVolt = (valueVolt /38.9);//
   
   return valueVolt;
   
@@ -150,5 +174,11 @@ Serial.print("mA\t Watt = ");
  valueAmp = (valueAmp/204.6);
  
  return valueAmp*1000;
+}
+
+void reset_millis()
+{
+ extern volatile unsigned long timer0_millis, timer0_overflow_count;
+ timer0_millis = timer0_overflow_count = 0;
 }
 
