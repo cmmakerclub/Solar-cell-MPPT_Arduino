@@ -134,8 +134,6 @@
 <wire x1="82" y1="-2" x2="82" y2="80" width="0" layer="20"/>
 <wire x1="82" y1="80" x2="0" y2="80" width="0" layer="20"/>
 <wire x1="0" y1="80" x2="0" y2="-2" width="0" layer="20"/>
-<text x="28" y="25" size="1.778" layer="16" rot="MR0">V1 by BUNHAN</text>
-<text x="77" y="42" size="1.778" layer="16" rot="MR0">V1 by BUNHAN</text>
 </plain>
 <libraries>
 <library name="con-lstb">
@@ -2731,7 +2729,7 @@ design rules under a new name.</description>
 <param name="layerSetup" value="(1*16)"/>
 <param name="mtCopper" value="0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm 0.035mm"/>
 <param name="mtIsolate" value="1.5mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm 0.15mm 0.2mm"/>
-<param name="mdWireWire" value="1.8mm"/>
+<param name="mdWireWire" value="1mm"/>
 <param name="mdWirePad" value="8mil"/>
 <param name="mdWireVia" value="8mil"/>
 <param name="mdPadPad" value="8mil"/>
@@ -3019,19 +3017,16 @@ design rules under a new name.</description>
 <wire x1="56.04" y1="46.17" x2="56.04" y2="45.4542125" width="0.8128" layer="16"/>
 <wire x1="56.04" y1="45.4542125" x2="55.74710625" y2="44.74710625" width="0.8128" layer="16" curve="-45"/>
 <wire x1="55.74710625" y1="44.74710625" x2="54" y2="44" width="0.8128" layer="16"/>
-<wire x1="54" y1="44" x2="49" y2="42" width="0.8128" layer="16"/>
-<wire x1="48.70710625" y1="45.12289375" x2="48.96" y2="45.87" width="0.8128" layer="16"/>
+<wire x1="54" y1="44" x2="50" y2="44" width="0.8128" layer="16"/>
+<wire x1="50" y1="44" x2="50" y2="44.4157875" width="0.8128" layer="16"/>
+<wire x1="50" y1="44.4157875" x2="49.70710625" y2="44.12289375" width="0.8128" layer="16" curve="45"/>
+<wire x1="49.70710625" y1="44.12289375" x2="48.96" y2="45.87" width="0.8128" layer="16"/>
+<via x="50" y="44" extent="1-16" drill="0.6" diameter="1.6764"/>
 <wire x1="38.57" y1="53.8" x2="38.8" y2="53.8" width="0.8128" layer="16"/>
 <wire x1="38.8" y1="53.8" x2="39" y2="54" width="0.8128" layer="16"/>
 <via x="39" y="54" extent="1-16" drill="0.6" diameter="1.6764"/>
 <wire x1="39" y1="54" x2="39" y2="44" width="0.8128" layer="1"/>
-<wire x1="48.70710625" y1="45.12289375" x2="49" y2="45.12289375" width="0.8128" layer="16"/>
-<wire x1="49" y1="45.12289375" x2="49" y2="42" width="0.8128" layer="16"/>
-<via x="49" y="42" extent="1-16" drill="1"/>
-<wire x1="49" y1="42" x2="39" y2="42" width="0.8128" layer="1"/>
-<via x="39" y="42" extent="1-16" drill="1"/>
-<wire x1="39" y1="42" x2="39" y2="44" width="0.8128" layer="16"/>
-<wire x1="39" y1="44" x2="39" y2="44" width="0" layer="19" extent="1-16"/>
+<wire x1="39" y1="44" x2="50" y2="44" width="0.8128" layer="1"/>
 </signal>
 <signal name="V+">
 <contactref element="OUT+DC-DC-5V" pad="1"/>
@@ -3194,16 +3189,16 @@ design rules under a new name.</description>
 <wire x1="52" y1="49" x2="51" y2="50" width="0.8128" layer="16"/>
 <wire x1="51" y1="50" x2="48" y2="50" width="0.8128" layer="16"/>
 <wire x1="48" y1="50" x2="46" y2="48" width="0.8128" layer="16"/>
-<wire x1="46" y1="48" x2="46" y2="40" width="0.8128" layer="16"/>
-<via x="46" y="40" extent="1-16" drill="0.6" diameter="1.6764"/>
+<wire x1="46" y1="48" x2="46" y2="42" width="0.8128" layer="16"/>
+<via x="46" y="42" extent="1-16" drill="0.6" diameter="1.6764"/>
 <wire x1="7.87" y1="44.88" x2="7.87" y2="47.87" width="0.8128" layer="16"/>
 <wire x1="7.87" y1="47.87" x2="8" y2="48" width="0.8128" layer="16"/>
 <via x="8" y="48" extent="1-16" drill="0.6" diameter="1.6764"/>
 <wire x1="8" y1="48" x2="13" y2="48" width="0.8128" layer="1"/>
 <via x="13" y="48" extent="1-16" drill="0.6" diameter="1.6764"/>
-<wire x1="13" y1="48" x2="13" y2="40" width="0.8128" layer="16"/>
-<via x="13" y="40" extent="1-16" drill="0.6" diameter="1.6764"/>
-<wire x1="13" y1="40" x2="46" y2="40" width="0.8128" layer="1"/>
+<wire x1="13" y1="48" x2="13" y2="42" width="0.8128" layer="16"/>
+<via x="13" y="42" extent="1-16" drill="0.6" diameter="1.6764"/>
+<wire x1="13" y1="42" x2="46" y2="42" width="0.8128" layer="1"/>
 </signal>
 <signal name="N$3">
 <contactref element="IC1" pad="5"/>
@@ -3268,6 +3263,9 @@ design rules under a new name.</description>
 <signal name="N$9">
 <via x="46" y="77" extent="1-16" drill="0.6" diameter="1.6764"/>
 </signal>
+<signal name="N$11">
+<via x="13" y="43" extent="1-16" drill="0.6" diameter="1.6764"/>
+</signal>
 <signal name="N$12">
 <via x="13" y="48" extent="1-16" drill="0.6" diameter="1.6764"/>
 </signal>
@@ -3288,9 +3286,6 @@ design rules under a new name.</description>
 <vertex x="82" y="-2"/>
 <vertex x="0" y="-2"/>
 </polygon>
-</signal>
-<signal name="N$11">
-<via x="39" y="42" extent="1-16" drill="1"/>
 </signal>
 </signals>
 <errors>
