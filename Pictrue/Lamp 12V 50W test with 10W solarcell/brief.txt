@@ -1,0 +1,2 @@
+When use MPPT  W = 2V * 1.2A = 2.4W
+When direct solarcell W = 0.3V*0.6A = 0.18W
